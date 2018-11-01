@@ -1,13 +1,8 @@
-/*
- * MS5837.h
- *
- *  Created on: 14 Haz 2018
- *      Author: Ekin Basar Komur
- */
-
 #ifndef MS5837_H_
 #define MS5837_H_
+
 #include "stm32f4xx_hal.h"
+#include "main.h"
 
 //Definitions:
 #define MS5837_ADDR               0x76
@@ -20,25 +15,32 @@
 
 //Models:
 #define MS5837_30BA               0x00
-#define MS5837_02BA				  0x01
+#define MS5837_02BA				        0x01
 
+#define waterDensity = 1029;
 
-//Function Prototypes:
+struct MS5837_t {
+	//MS5837 model(Default MS5837_30BA)
+	uint8_t model;
+	//Fluid density (Default 1029)
+	float fluidDensity;
+	//Pressure unit (Default mBar)
+	float temperture;
+	float pressure;
+};
 
-uint8_t init();
-uint8_t crc4(uint16_t n_prom[]);
-void Read();
-void calculate();
-void setModel(uint8_t model);
-void setFluidDensity(float density);
-float pressure(float conversion);
-float temperature();
+//Values red from MS5837
+struct MS5837_values_t{
+	int32_t TEMP;
+	int32_t P;
+	uint16_t C[8];
+	uint32_t D1;
+	uint32_t D2;
+};
+
+uint8_t MS5837_init(I2C_HandleTypeDef *i2c_channel);
+void MS5837_read(I2C_HandleTypeDef *i2c_channel);
 float depth();
 float altitude();
 
-int8_t I2C_read8(uint8_t addr);
-int16_t I2C_read16(uint8_t addr);
-int32_t I2C_read32(uint8_t addr);
-void I2C_send(uint8_t addr);
-
-#endif /* MS5837_H_ */
+#endif
